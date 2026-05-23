@@ -182,6 +182,19 @@ export interface Database {
         }
         Returns: Array<{ booking_id: string; pnr_code: string }>
       }
+      cancel_booking: {
+        Args: {
+          p_booking_id: string
+        }
+        Returns: void
+      }
+      reschedule_booking: {
+        Args: {
+          p_booking_id: string
+          p_new_flight_id: string
+        }
+        Returns: void
+      }
     }
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>

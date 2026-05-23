@@ -22,18 +22,37 @@ export default async function SeatsPage({ searchParams }: SeatsPageProps) {
 
   const supabase = await createClient()
 
-  // Fetch flight + all seats in parallel
-  const [{ data: flight, error: flightError }, { data: seats, error: seatsError }] =
-    await Promise.all([
-      supabase.from('flights').select('*').eq('id', flightId).single(),
-      supabase
-        .from('seats')
-        .select('*')
-        .eq('flight_id', flightId)
-        .order('seat_number', { ascending: true }),
-    ])
+  // Fetch user, flight + all seats in parallel
+  const [
+    { data: { user } },
+    { data: flight, error: flightError },
+    { data: seats, error: seatsError },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from('flights').select('*').eq('id', flightId).single(),
+    supabase
+      .from('seats')
+      .select('*')
+      .eq('flight_id', flightId)
+      .order('seat_number', { ascending: true }),
+  ])
 
   if (flightError || !flight || seatsError || !seats) return notFound()
+
+  // Fetch user's confirmed bookings for this flight
+  let userBookedSeatIds: string[] = []
+  if (user) {
+    const { data: userBookings } = await supabase
+      .from('bookings')
+      .select('seat_id')
+      .eq('user_id', user.id)
+      .eq('flight_id', flightId)
+      .eq('status', 'confirmed')
+
+    if (userBookings) {
+      userBookedSeatIds = userBookings.map((b) => b.seat_id)
+    }
+  }
 
   const validClass = (['economy', 'business', 'first'] as SeatClass[]).includes(
     cabinClass as SeatClass
@@ -91,7 +110,7 @@ export default async function SeatsPage({ searchParams }: SeatsPageProps) {
         </span>
       </h1>
 
-      <SeatGrid seats={seats} selectedClass={validClass} />
+      <SeatGrid key={flightId} seats={seats} selectedClass={validClass} userBookedSeatIds={userBookedSeatIds} />
     </div>
   )
 }

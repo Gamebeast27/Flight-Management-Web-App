@@ -79,6 +79,7 @@ export interface UserStoreState {
 export interface UserStoreActions {
   setSession: (session: Session | null) => void
   setCachedBookings: (bookings: BookingRow[]) => void
+  clearCachedBookings: () => void
   clearUser: () => void
 }
 

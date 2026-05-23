@@ -27,6 +27,8 @@ export const useUserStore = create<UserStore>()(
       setCachedBookings: (bookings: BookingRow[]) =>
         set({ cachedBookings: bookings }),
 
+      clearCachedBookings: () => set({ cachedBookings: [] }),
+
       clearUser: () => set(initialUserState),
     }),
     {

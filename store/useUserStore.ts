@@ -6,8 +6,8 @@ import type {
   UserStore,
   UserStoreState,
   PersistedUserState,
-  BookingRow,
 } from '@/types/store'
+import type { BookingWithFullDetails } from '@/types/booking'
 import type { Session } from '@supabase/supabase-js'
 
 // ─── Initial state ────────────────────────────────────────────────────────────
@@ -24,7 +24,7 @@ export const useUserStore = create<UserStore>()(
 
       setSession: (session: Session | null) => set({ session }),
 
-      setCachedBookings: (bookings: BookingRow[]) =>
+      setCachedBookings: (bookings: BookingWithFullDetails[]) =>
         set({ cachedBookings: bookings }),
 
       clearCachedBookings: () => set({ cachedBookings: [] }),
@@ -36,11 +36,11 @@ export const useUserStore = create<UserStore>()(
       storage: createJSONStorage(() => localStorage),
 
       /**
-       * Only persist the session token — cachedBookings are fetched fresh
-       * from Supabase on each visit to avoid stale data.
+       * Persist session and cachedBookings for offline support.
        */
       partialize: (state): PersistedUserState => ({
         session: state.session,
+        cachedBookings: state.cachedBookings,
       }),
     }
   )

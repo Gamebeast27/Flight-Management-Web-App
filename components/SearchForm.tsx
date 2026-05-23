@@ -153,55 +153,54 @@ export function SearchForm() {
       {/* Seeded Demo Shortcuts */}
       <div className="sm:col-span-2 lg:col-span-5 border-t border-slate-800/60 pt-4 mt-2">
         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 text-center sm:text-left">
-          💡 Demo Flight Shortcuts (Click to Auto-Fill)
+          💡 Demo Shortcuts — Try these today
         </p>
         <div className="flex flex-wrap justify-center sm:justify-start gap-2">
           <button
             type="button"
-            onClick={() => {
-              setOrigin('DEL')
-              setDestination('BOM')
-              setDate('2026-06-15')
-            }}
+            onClick={() => { setOrigin('DEL'); setDestination('BOM'); setDate('2026-05-24') }}
             className="text-xs bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-sky-500/50 text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-all cursor-pointer font-medium"
           >
-            DEL → BOM (15 June 2026)
+            DEL → BOM (24 May)
           </button>
           <button
             type="button"
-            onClick={() => {
-              setOrigin('BOM')
-              setDestination('BLR')
-              setDate('2026-06-16')
-            }}
+            onClick={() => { setOrigin('BOM'); setDestination('BLR'); setDate('2026-05-25') }}
             className="text-xs bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-sky-500/50 text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-all cursor-pointer font-medium"
           >
-            BOM → BLR (16 June 2026)
+            BOM → BLR (25 May)
           </button>
           <button
             type="button"
-            onClick={() => {
-              setOrigin('DEL')
-              setDestination('BLR')
-              setDate('2026-06-17')
-            }}
+            onClick={() => { setOrigin('DEL'); setDestination('BLR'); setDate('2026-05-26') }}
             className="text-xs bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-sky-500/50 text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-all cursor-pointer font-medium"
           >
-            DEL → BLR (17 June 2026)
+            DEL → BLR (26 May)
           </button>
           <button
             type="button"
-            onClick={() => {
-              setOrigin('BOM')
-              setDestination('HYD')
-              setDate('2026-06-18')
-            }}
+            onClick={() => { setOrigin('BOM'); setDestination('HYD'); setDate('2026-05-27') }}
             className="text-xs bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-sky-500/50 text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-all cursor-pointer font-medium"
           >
-            BOM → HYD (18 June 2026)
+            BOM → HYD (27 May)
+          </button>
+          <button
+            type="button"
+            onClick={() => { setOrigin('BLR'); setDestination('DEL'); setDate('2026-05-28') }}
+            className="text-xs bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-sky-500/50 text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-all cursor-pointer font-medium"
+          >
+            BLR → DEL (28 May)
+          </button>
+          <button
+            type="button"
+            onClick={() => { setOrigin('HYD'); setDestination('BOM'); setDate('2026-05-29') }}
+            className="text-xs bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-sky-500/50 text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-all cursor-pointer font-medium"
+          >
+            HYD → BOM (29 May)
           </button>
         </div>
       </div>
     </form>
   )
 }
+

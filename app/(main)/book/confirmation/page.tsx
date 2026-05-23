@@ -37,6 +37,11 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
   const booking = data as unknown as BookingWithDetails
   const { flights: flight, seats: seat } = booking
 
+  // Parse PNRs — multi-seat sends comma-separated list (e.g. "ABC123,DEF456")
+  const pnrList: string[] = pnr
+    ? pnr.split(',').map((p) => p.trim()).filter(Boolean)
+    : [booking.pnr_code]
+
   const duration = formatDuration(flight.departs_at, flight.arrives_at)
 
   return (
@@ -49,17 +54,32 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
           </svg>
         </div>
         <h1 className="text-3xl font-extrabold text-white">Booking Confirmed!</h1>
-        <p className="text-slate-400 mt-2">Your seat is reserved. Safe travels! ✈️</p>
+        <p className="text-slate-400 mt-2">
+          {pnrList.length > 1
+            ? `${pnrList.length} seats reserved. Safe travels! ✈️`
+            : 'Your seat is reserved. Safe travels! ✈️'}
+        </p>
       </div>
 
       {/* PNR card */}
       <div className="rounded-2xl border border-sky-500/40 bg-gradient-to-br from-sky-950/60 to-blue-950/60 p-6 mb-6 text-center shadow-xl shadow-sky-900/20">
-        <p className="text-xs font-bold text-sky-500 uppercase tracking-widest mb-2">
-          PNR / Booking Reference
+        <p className="text-xs font-bold text-sky-500 uppercase tracking-widest mb-3">
+          PNR / Booking Reference{pnrList.length > 1 ? 's' : ''}
         </p>
-        <p className="text-5xl font-black tracking-widest text-white font-mono">
-          {pnr ?? booking.pnr_code}
-        </p>
+        {pnrList.length === 1 ? (
+          <p className="text-5xl font-black tracking-widest text-white font-mono">
+            {pnrList[0]}
+          </p>
+        ) : (
+          <div className="flex flex-wrap justify-center gap-3 mt-1">
+            {pnrList.map((code, i) => (
+              <div key={code} className="flex flex-col items-center gap-1">
+                <span className="text-[10px] text-sky-400 font-bold uppercase tracking-wider">Passenger {i + 1}</span>
+                <span className="text-2xl font-black tracking-widest text-white font-mono bg-white/5 rounded-xl px-4 py-2 border border-sky-500/20">{code}</span>
+              </div>
+            ))}
+          </div>
+        )}
         <p className="text-xs text-slate-500 mt-3">
           Show this code at the airport or online check-in
         </p>

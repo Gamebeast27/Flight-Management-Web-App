@@ -11,12 +11,13 @@ export const metadata: Metadata = { title: 'Select a Seat | FlightMgmt' }
 type SeatClass = Database['public']['Tables']['seats']['Row']['class']
 
 interface SeatsPageProps {
-  searchParams: Promise<{ flightId?: string; class?: string }>
+  searchParams: Promise<{ flightId?: string; class?: string; passengers?: string }>
 }
 
 export default async function SeatsPage({ searchParams }: SeatsPageProps) {
   const params = await searchParams
-  const { flightId, class: cabinClass = 'economy' } = params
+  const { flightId, class: cabinClass = 'economy', passengers = '1' } = params
+  const passengerCount = Math.max(1, Math.min(9, parseInt(passengers, 10) || 1))
 
   if (!flightId) return notFound()
 
@@ -110,7 +111,7 @@ export default async function SeatsPage({ searchParams }: SeatsPageProps) {
         </span>
       </h1>
 
-      <SeatGrid key={flightId} seats={seats} selectedClass={validClass} userBookedSeatIds={userBookedSeatIds} />
+      <SeatGrid key={flightId} seats={seats} selectedClass={validClass} userBookedSeatIds={userBookedSeatIds} passengerCount={passengerCount} />
     </div>
   )
 }

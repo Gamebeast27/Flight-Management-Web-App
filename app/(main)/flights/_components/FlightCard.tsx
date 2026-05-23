@@ -19,12 +19,16 @@ interface FlightCardProps {
 }
 
 export function FlightCard({ flight, cabinClass }: FlightCardProps) {
-  const router    = useRouter()
-  const setFlight = useFlightStore((s) => s.setFlight)
+  const router          = useRouter()
+  const setFlight       = useFlightStore((s) => s.setFlight)
+  const activeSearch    = useFlightStore((s) => s.activeSearchQuery)
+  const passengerCount  = activeSearch?.passengerCount ?? 1
 
   function handleSelect() {
     setFlight(flight)
-    router.push(`/book/seats?flightId=${flight.id}&class=${cabinClass}`)
+    router.push(
+      `/book/seats?flightId=${flight.id}&class=${cabinClass}&passengers=${passengerCount}`
+    )
   }
 
   const duration = formatDuration(flight.departs_at, flight.arrives_at)

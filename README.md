@@ -1,171 +1,81 @@
-# ✈️ Flight Management Web App
+# ✈️ Flight Management Web App (PWA)
 
-A production-grade Progressive Web App built with **Next.js 14 (App Router)**, **Supabase**, **Zustand**, and **Tailwind CSS** — enabling users to search flights, book seats, reschedule, and cancel bookings.
+A full-stack, responsive Progressive Web App built with Next.js 14 (App Router) and Supabase. This app allows passengers to search for flights, book seats via a real-time cabin map, manage their reservations, reschedule, and cancel bookings.
 
----
+## 🚀 Tech Stack
 
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14+ (App Router, TypeScript strict) |
-| Database | Supabase (PostgreSQL) |
-| Auth | Supabase Auth |
-| Realtime | Supabase Realtime |
-| State | Zustand with persist middleware |
-| Styling | Tailwind CSS |
-| PWA | @ducanh2912/next-pwa (Workbox) |
+- **Frontend & API:** Next.js 14+ (App Router, Server Actions, Server Components)
+- **Database & Auth:** Supabase (PostgreSQL, Supabase Auth, Realtime)
+- **State Management:** Zustand (with `persist` middleware for offline caching & session recovery)
+- **Styling:** Tailwind CSS (Dark theme, glassmorphism UI)
+- **PWA Integration:** `next-pwa` (Service workers, manifest, offline fallback)
 
 ---
 
-## Getting Started
+## 📸 Lighthouse PWA Audit
 
-### 1. Prerequisites
+The application is fully optimized and meets all Progressive Web App standards, scoring a perfect 99+ across categories, including **Performance, Accessibility, Best Practices, and SEO**.
 
-- Node.js 20+
-- A [Supabase](https://supabase.com) project (free tier works)
+![Lighthouse Score](lighthouse.png)
 
-### 2. Clone & Install
+*(Note: The Lighthouse PWA check was verified through Chrome DevTools Application tab, and offline caching is fully functional.)*
 
+---
+
+## ✨ Features
+
+- **Search Flights:** View real-time flight availability across 12 seeded routes for the upcoming 7 days.
+- **Interactive Seat Map:** Select single or multiple seats on a visual cabin grid (Economy, Business, First Class) powered by Supabase Realtime to prevent double-booking.
+- **Booking Management:** Securely reserve seats, generate unique 6-character PNR codes, and manage passenger details.
+- **Reschedule & Cancel:** Modify existing bookings with automated price-difference calculations.
+- **Offline Mode:** The "My Bookings" page caches data locally using Zustand `persist`. If the user loses internet connection, they can still view their last-synced ticketing history.
+- **Installable PWA:** Users can install the app natively on Desktop, iOS, and Android.
+
+---
+
+## 🛠️ Local Setup Instructions
+
+### 1. Clone the repository
 ```bash
-git clone <repo-url>
-cd "Flight Management Web App"
+git clone <your-repo-url>
+cd flight-management-app
+```
+
+### 2. Install dependencies
+```bash
 npm install
 ```
 
 ### 3. Environment Variables
-
-Copy the example file and fill in your Supabase credentials:
-
-```bash
-cp .env.example .env.local
-```
-
-Open `.env.local` and set:
-
+Create a `.env.local` file in the root of the project and add your Supabase credentials:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
-SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>   # server-side only
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-> **Where to find these:** Supabase Dashboard → Project Settings → API
+### 4. Database Setup (Supabase)
+Run the SQL files located in the `supabase/` directory in your Supabase SQL Editor in this exact order:
+1. `migrations/20260522000000_initial_schema.sql` (Creates tables, triggers, policies, and auth hooks)
+2. `migrations/20260523000001_fix_reserve_seat_pnr.sql` (Applies the fix for the booking RPC)
+3. `seed_3_flights_7days.sql` (Populates 115+ flights and seat maps for the next 7 days)
 
-### 4. Apply Database Migrations
-
-Run the SQL files in order via **Supabase Dashboard → SQL Editor**:
-
-| Order | File | Purpose |
-|---|---|---|
-| 1 | `supabase/migrations/20260521000001_create_tables.sql` | Creates all 5 tables |
-| 2 | `supabase/migrations/20260521000002_enable_rls.sql` | Enables RLS + all policies |
-| 3 | `supabase/migrations/20260521000003_rpc_reserve_seat.sql` | Atomic reservation RPC |
-| 4 | `supabase/migrations/20260521000004_trigger_cancellation_guard.sql` | Cancellation guard trigger |
-
-> Alternatively, if you have the [Supabase CLI](https://supabase.com/docs/guides/cli) installed and linked:
-> ```bash
-> supabase db push
-> ```
-
-### 5. Seed the Database
-
-Run `supabase/seed.sql` via Supabase Dashboard → SQL Editor.
-
-This inserts:
-- **8 flights** across 4 routes (DEL→BOM, BOM→BLR, DEL→BLR, BOM→HYD)
-- **1,168 seats** (146 per flight: Economy rows 1–20, Business 21–25, First 26–28)
-
-### 6. Create the Test User
-
-> ⚠️ Auth users cannot be created via raw SQL. Use the Supabase Dashboard:
-
-1. Go to **Authentication → Users → Invite User** (or Add User)
-2. Use these credentials:
-
-| Field | Value |
-|---|---|
-| Email | `test@flightapp.dev` |
-| Password | `TestFlight@123` |
-
-### 7. Run Locally
-
+### 5. Run the Application
+**For standard development:**
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
-
----
-
-## Database Schema
-
-```
-flights        — flight schedules & pricing
-seats          — seat map per flight (economy/business/first)
-bookings       — user reservations with PNR code
-passengers     — traveller details per booking
-reschedules    — reschedule history per booking
-```
-
-### Key Business Rules
-
-| Rule | Implementation |
-|---|---|
-| **Atomic booking** | `reserve_seat()` RPC uses `SELECT FOR UPDATE` — no double-booking |
-| **PNR uniqueness** | DB UNIQUE constraint + collision-retry loop in RPC |
-| **Cancellation window** | BEFORE UPDATE trigger — rejects if departure < 2 hours away |
-| **Data isolation** | RLS ensures users see only their own bookings/passengers/reschedules |
-
----
-
-## Project Structure
-
-```
-├── app/                    # Next.js App Router (Phase 2)
-├── lib/
-│   └── supabase/
-│       ├── client.ts       # Browser client (Client Components)
-│       ├── server.ts       # Server client (Server Components, Actions)
-│       └── middleware.ts   # Session refresh helper
-├── types/
-│   └── supabase.ts         # Strict TypeScript DB types
-├── supabase/
-│   ├── migrations/         # SQL migration files (run in order)
-│   └── seed.sql            # Flight + seat seed data
-├── public/
-│   └── manifest.json       # PWA manifest
-├── middleware.ts            # Next.js root middleware (session refresh)
-├── next.config.ts           # Next.js + PWA config
-└── .env.example             # Environment variable template
+**To test PWA offline capabilities (Requires Production Build):**
+```bash
+npm run build
+npm run start
 ```
 
 ---
 
-## Verification Checklist
-
-After applying migrations, verify in Supabase SQL Editor:
-
-```sql
--- Check all tables exist
-SELECT table_name FROM information_schema.tables
-WHERE table_schema = 'public';
-
--- Check RLS is enabled
-SELECT tablename, rowsecurity FROM pg_tables
-WHERE schemaname = 'public';
-
--- Test the reservation RPC (replace with real UUIDs after seeding)
--- SELECT * FROM public.reserve_seat('<seat_id>', '<user_id>', '<flight_id>');
-
--- Verify cancellation trigger (should throw error for imminent flights)
--- UPDATE public.bookings SET status = 'cancelled' WHERE id = '<id>';
-```
+## 🌐 Deployment
+This application is designed to be easily deployed on [Vercel](https://vercel.com). Simply import your GitHub repository, ensure your Supabase `.env` variables are added in the Vercel project settings, and click Deploy.
 
 ---
 
-## Roadmap
-
-- **Phase 1** ✅ — Infrastructure (current)
-- **Phase 2** — UI: search page, seat selector, booking flow, my bookings
-- **Phase 3** — Realtime seat availability, notifications, reschedule flow
-- **Phase 4** — Admin dashboard, analytics, payment integration
+*Developed for the Internship Technical Assignment.*

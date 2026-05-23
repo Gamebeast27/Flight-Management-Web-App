@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/Navbar'
-import { BookingCard } from './_components/BookingCard'
+import { BookingsList } from './_components/BookingsList'
 import type { BookingWithDetails } from '@/types/booking'
 import type { Database } from '@/types/supabase'
 
@@ -77,32 +77,8 @@ export default async function BookingsPage() {
             </Link>
           </div>
 
-          {/* Bookings List */}
-          {typedBookings.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-800 bg-slate-900/20 backdrop-blur-xl p-12 text-center">
-              <div className="mx-auto w-12 h-12 rounded-xl bg-slate-800/60 flex items-center justify-center text-slate-500 mb-4">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.5 12h-15m0 0l3-3m-3 3l3 3" />
-                </svg>
-              </div>
-              <h2 className="text-lg font-bold text-white mb-2">No bookings found</h2>
-              <p className="text-sm text-slate-400 max-w-md mx-auto mb-6">
-                You do not have any bookings registered to your account yet. Ready to start your next adventure?
-              </p>
-              <Link
-                href="/"
-                className="inline-flex items-center rounded-xl border border-slate-700 hover:border-slate-600 bg-slate-800/50 hover:bg-slate-800 text-slate-200 text-sm font-semibold px-5 py-2.5 transition-all"
-              >
-                Search Flights
-              </Link>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-6">
-              {typedBookings.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} />
-              ))}
-            </div>
-          )}
+          {/* Bookings List (with offline support) */}
+          <BookingsList initialBookings={typedBookings} />
         </div>
       </main>
 

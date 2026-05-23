@@ -22,6 +22,16 @@ The application is fully optimized and meets all Progressive Web App standards, 
 
 ---
 
+## 🔑 Test Credentials (For Reviewers)
+
+To test the application without registering a new account, you can use the following test user credentials:
+- **Email:** `test@flightapp.dev`
+- **Password:** `Password123!`
+
+*(Note for developer: Please register this account in your live app before submitting!)*
+
+---
+
 ## ✨ Features
 
 - **Search Flights:** View real-time flight availability across 12 seeded routes for the upcoming 7 days.
